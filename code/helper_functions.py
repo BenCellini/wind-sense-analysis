@@ -1,5 +1,25 @@
 
-import math
+import math as m
+import numpy as np
+
+def cart2sph(x,y,z):
+    XsqPlusYsq = x**2 + y**2
+    r = m.sqrt(XsqPlusYsq + z**2) # r
+    elev = m.atan2(z,m.sqrt(XsqPlusYsq))  # theta
+    az = m.atan2(y,x)  # phi
+    return r, elev, az
+
+def cart2sphA(pts):
+    return np.array([cart2sph(x,y,z) for x,y,z in pts])
+
+def cart2polar(x,y):
+    XsqPlusYsq = x**2 + y**2
+    r = m.sqrt(XsqPlusYsq)  # r
+    az = m.atan2(y,x)  # phi
+    return r, az
+
+def cart2polarA(pts):
+    return np.array([cart2polar(x,y) for x,y in pts])
 
 def euler_from_quaternion(x, y, z, w):
     """

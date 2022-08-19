@@ -389,3 +389,18 @@ def get_lat_lon_scale(origin, destination):
     d = radius * c
 
     return d*1000 # in meters
+
+######################### NEW #########################
+def cart2polar(x, y):
+    rho = np.sqrt(x**2 + y**2)
+    phi = np.arctan2(y, x)
+    return (rho, phi)
+
+def wrapTo2Pi(rad):
+    rad = rad % (2 * np.pi)
+    return rad
+
+def wrapToPi(rad):
+    q = (rad < -np.pi) | (np.pi < rad)
+    rad[q] = ((rad[q] + np.pi) % (2 * np.pi)) - np.pi
+    return rad
