@@ -83,7 +83,7 @@ class circKF:
         if circ:
             self.x[0, 0] = self.x[0, 0] % (2*np.pi)
 
-    def runFilter(self, y_record, u_record, P0, x0=None, circ=True):
+    def runFilter(self, y_record, u_record, P0, x0=None, circ=True, y_record_2=None):
         # runFilter: calculate the Kalman gain K & new covariance of the state P
         #   y_record: set of prerecorded measurements
         #   u_record: set of prerecorded inputs
@@ -97,6 +97,8 @@ class circKF:
         # Allow consistent 2D indexing
         y_record = np.atleast_2d(y_record)
         u_record = np.atleast_2d(u_record)
+        if y_record_2 is not None:
+            y_record_2 = np.atleast_2d(y_record_2)
 
         # Preallocate storage for state estimates (X), kalman gains (K), & noise covariance (P)
         X = np.empty((n_point, self.n))
@@ -113,7 +115,7 @@ class circKF:
         else:
             self.x = x0
 
-        X[0, :] = x0  # store initial state estimate
+        X[0, :] = np.squeeze(self.x)  # store initial state estimate
 
         # Initial state covariance estimate
         self.P = P0
@@ -125,11 +127,17 @@ class circKF:
             self.y = np.atleast_2d(y_record[:, k])
 
             # Get current input
-            self.u =  np.atleast_2d(u_record[:, k])
+            self.u = np.atleast_2d(u_record[:, k])
 
             # Kalman iteration
             self.calKalmanGain(self.P)
             self.estimateState(self.x, self.y, self.u, circ)
+
+            # Update again based on 2nd measurement (if specified)
+            if y_record_2 is not None:
+                yy = np.atleast_2d(y_record_2[:, k])
+                # print(yy)
+                self.estimateState(self.x, yy, self.u, circ)
 
             # Store state estimates & kalman gain
             X[k, :] = np.transpose(self.x)
