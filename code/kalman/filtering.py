@@ -203,14 +203,14 @@ def vM_Projection_Run(T,kappa_phi,z=None,alpha=0,dy=None,kappa_y=0,
     mu_out      - mean estimate after update
     kappa_out   - certainty estimate after update 
     """
-
-    mu = np.zeros(int(T/dt))
+    n_point = int((T / dt) + 1)
+    mu = np.zeros(n_point)
     mu[0] = phi_0
-    kappa = np.zeros(int(T/dt))
+    kappa = np.zeros(n_point)
     kappa[0] = kappa_0
     if kappa_y == 0:
-        dy = np.zeros(int(T/dt))
-    for i in range(1,int(T/dt)):
+        dy = np.zeros(n_point)
+    for i in range(1,n_point):
         [mu[i],kappa[i]] = vM_Projection(mu[i-1],kappa[i-1],
                                         kappa_phi, #diffusion
                                         z=z[i],alpha=alpha, # direct obs
